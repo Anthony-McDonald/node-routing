@@ -11,8 +11,18 @@ http.createServer(function (req, res) {
     } 
     fs.readFile(pageToGoTo, function(err, data) {
         if (err) {
-            res.writeHead(404, {'Content-Type': 'text/html'});
-            return res.end("404 not found at: " + pageToGoTo);
+            fs.readFile('./404.html', function(innerErr, innerData) {
+                if (innerErr) {
+                    res.writeHead(500, {'Content-Type': 'text/html'});
+                    res.end("Server Error");
+                } else {
+                    res.writeHead(404, {'Content-Type': 'text/html'});
+                    res.write(innerData);
+                    res.end();
+                }
+
+            });
+            return;
         }
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.write(data);
